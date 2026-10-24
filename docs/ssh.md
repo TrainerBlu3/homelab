@@ -88,3 +88,13 @@ Not set up on purpose. The Pis don't need shell access to each other, and leavin
 ## Exiting
 
 `exit` or `Ctrl+D`. If the session is frozen: Enter, then `~.`.
+
+## Client config: details
+
+- Set up on the laptop (`C:\Users\<you>\.ssh\config`) and chadlab (`~/.ssh/config`), from [config.example](../configs/ssh/config.example).
+- `Host *` defaults: `ServerAliveInterval 60` / `ServerAliveCountMax 3` keep idle sessions alive and disconnect cleanly instead of freezing.
+- Linux: `chmod 600 ~/.ssh/config`. SSH refuses a config other users could edit.
+- Windows: write the file from PowerShell, not Notepad. Notepad can save it as `config.txt`, which SSH ignores.
+- Verify without connecting: `ssh -G <alias>` prints the final settings SSH would use.
+- Aliases work for `scp`, `rsync`, git and VS Code Remote-SSH too.
+- LAN IPs work remotely through the Tailscale subnet route (needs choppedlab up).

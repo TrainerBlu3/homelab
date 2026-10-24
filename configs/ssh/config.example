@@ -12,3 +12,7 @@ Host npclab
 Host chadlab
     HostName <chadlab-ip>
     User trainerblue
+
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
