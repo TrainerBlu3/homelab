@@ -66,3 +66,4 @@ Anything else is new and worth investigating.
 | 2026-10-24 | both Pis | Security updates automated | unattended-upgrades + kernel blacklist |
 | 2026-10-24 | npclab → choppedlab | Full upgrade (70 pkgs) | Canary order. Kernel pkg 26.8.1 → 26.8.3 (still 6.18.44). Clean boots |
 | 2026-10-24 | choppedlab | Pi-hole installed | Quad9 upstream, listening mode ALL |
+| 2026-10-24 | Telus hub | IPv6 disabled | Closes IPv6 DNS leak around Pi-Hole (Telus resolver was answering via IPv6). Verified: Laptop DNS only Pi-hole, doubleclick -> 0.0.0.0, Tailscale OK over IPv4 |
