@@ -1,0 +1,9 @@
+// /etc/apt/apt.conf.d/51unattended-upgrades-local
+// Keep kernel, device tree, bootloader and firmware out of automatic updates.
+// These are updated by hand, npclab first (canary). See docs/maintenance.md.
+Unattended-Upgrade::Package-Blacklist {
+    "linux-image-";
+    "linux-dtb-";
+    "linux-u-boot-";
+    "armbian-firmware";
+};

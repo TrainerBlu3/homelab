@@ -1,45 +1,63 @@
 # Roadmap
 
-## Now
+## Done
 
 - [x] Flash both Rock Pis with Armbian Debian 13 Minimal
 - [x] Reserve IPs, apply naming theme
-- [x] Key-only SSH on both Pis
-- [ ] Stress test both Pis (before Nov 2)
-- [x] Key-only SSH on chadlab
-- [ ] Tailscale on choppedlab as subnet router
+- [x] Key-only SSH on both Pis and chadlab (no root, `AllowUsers`)
+- [x] Stress test both Pis (two rounds)
+- [x] Error baselines saved on both Pis
+- [x] Automatic security updates, kernel excluded; first canary kernel rollout
+- [x] Tailscale on choppedlab (subnet router), iPhone, laptop
+- [x] Telus hub DNS assessment
+- [x] Pi-hole on choppedlab, verified locally and from the LAN
+
+## Now
+
+- [ ] Cold boots: 3+ per Pi (before Nov 2)
+- [ ] Pi-hole canary: laptop DNS → choppedlab for a day; test the IPv6 leak
+- [ ] Horaco switch setup (when it arrives)
+- [ ] **Buy UPS** before the house depends on Pi-hole
+- [ ] Pi-hole on npclab + nebula-sync
+- [ ] keepalived floating DNS IP → hub DNS field
+- [ ] Tailscale DNS → Pi-holes
+- [ ] Decide on IPv6 (turn off on the hub vs forward)
+
+## Next
+
 - [ ] Tailscale on chadlab (host-level, not inside gluetun)
-- [ ] Pi-hole on choppedlab (primary)
-- [ ] Pi-hole on npclab (secondary) + nebula-sync
+- [ ] npclab as backup subnet router
+- [ ] Unbound recursive DNS on both Pis
+- [ ] Health-check script + systemd timer + ntfy
+- [ ] Uptime Kuma
+- [ ] RTC coin-cell battery for the Pis
 
-### Tailscale subnet router (choppedlab)
-```bash
-curl -fsSL https://tailscale.com/install.sh | sh
-echo 'net.ipv4.ip_forward = 1' | sudo tee /etc/sysctl.d/99-tailscale.conf
-echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
-sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
-sudo tailscale up --advertise-routes=192.168.1.0/24
-```
-Approve the route in the Tailscale admin console.
+## Docker (chadlab): learning path
 
-## Hardware
+1. [ ] Uptime Kuma: one container (compose, ports, volumes, restart policies)
+2. [ ] Homepage: config files, bind vs named volumes
+3. [ ] App + Postgres: networks, `depends_on`, `.env`
+4. [ ] qBittorrent behind gluetun: `network_mode: service:`
+5. [ ] Full media stack (after storage)
 
-1. **Switch:** Horaco 8×2.5G + 1×10G SFP+, managed variant
-2. **Rack:** 12U 10" (Tecmojo or DeskPi RackMate T2), shelves, 4×80mm fan unit, power strip
-3. **UPS:** CyberPower CP850PFCLCD (pure sine). NUT on chadlab for graceful shutdown of all three boxes
-4. **Storage:** WD Red Plus 4TB in a USB enclosure, plus a 1–2TB backup drive
+Compose files live in `stacks/` in this repo; real `.env` files stay out of git.
 
-Later: multi-bay DAS + mergerfs/SnapRAID, Cisco fanless switch for CCNA lab.
+## Hardware (buy order)
 
-## Software
+1. **UPS:** CyberPower CP850PFCLCD (pure sine). Tower; sits beside the rack. NUT on chadlab for graceful shutdown
+2. **Storage:** WD Red Plus 4TB + USB enclosure
+3. **Backup drive:** 1–2TB, before anything irreplaceable goes on the server
+4. **Rack:** 12U 10", vented shelves, fan unit with dust filter, 10" power strip
+5. **Finishing:** short patch cables, velcro, Dual Lock
 
-- Vaultwarden (after UPS; HTTPS via `tailscale serve`)
-- Immich, Nextcloud, Gitea
-- pfSense on chadlab (router-on-a-stick over VLANs)
-- Custom Horaco switch exporter → Prometheus + Grafana
-- Headscale (maybe)
+Later: SFP+ RJ45 module (multi-rate), 2.5G NIC for the M80q, multi-bay DAS, Cisco switch for a CCNA lab.
+
+## Later services
+
+Vaultwarden (after UPS + backups; HTTPS via `tailscale serve`), Immich, Nextcloud, Gitea, pfSense + VLANs, Horaco switch exporter → Prometheus + Grafana, Ansible.
 
 ## Not doing
 
-- Raspberry Pis: the RK3399 covers DNS and routing, and RAM-driven Pi price hikes make a used 1L mini PC better value if more compute is needed
-- Arch on the Pis: no official board support, and a rolling release is a poor fit for DNS
+- Raspberry Pis: the RK3399 covers DNS and routing; RAM-driven Pi price hikes make a used 1L mini PC better value if more compute is needed
+- Arch on the Pis: no official board support; a rolling release is a poor fit for DNS
+- Public exposure of admin interfaces (SSH, Pi-hole, hub, switch): Tailscale only

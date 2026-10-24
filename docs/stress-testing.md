@@ -1,52 +1,57 @@
 # Stress testing
 
-Validates each board and its power supply under sustained load. Run it on both Pis before the charger return window closes (Nov 2).
+Validates each board and its power supply under sustained load, and checks that it recovers cleanly from power loss.
 
-## Run it
+## Load test
 
-Use tmux so the test survives an SSH drop:
+Run in tmux so the test survives an SSH drop. **Paste one line at a time** (multi-line pastes into tmux can split across shells).
 ```bash
 sudo apt install -y tmux stress-ng
 tmux new -s stress
 ```
-
-Pane 1 (or use [`scripts/stress-test.sh`](../scripts/stress-test.sh)):
 ```bash
-stress-ng --cpu 6 --vm 2 --vm-bytes 75% --timeout 30m --metrics-brief
+bash ~/stress-test.sh 30
 ```
+Optional live view: `Ctrl+b` `%`, then `tail -f ~/stress-$(hostname)-*.log`.
 
-`Ctrl+b` `%` to split, then in pane 2:
+`--vm-bytes 75%` takes 75% of memory *available at start*, so the load varies slightly between runs.
+
+### Reading the results
 ```bash
-watch -n 2 'cat /sys/class/thermal/thermal_zone*/temp; cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq'
+LOG=$(ls -t ~/stress-*.log | head -1)
+grep -o 'temp=[0-9]*' "$LOG" | cut -d= -f2 | sort -n | tail -1      # peak °C
+awk -F'freq=' '{print $2}' "$LOG" | sort | uniq -c | sort -rn       # throttling
+cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq           # real max clocks
 ```
-Temperatures are millidegrees: `60000` = 60°C.
+Full speed on this board (**OP1** RK3399): **1512MHz** little ×4 / **2016MHz** big ×2. Always read the max clocks from the system rather than assuming them.
 
-Detach with `Ctrl+b` `d`. Reattach with `tmux attach -t stress`.
+Thermal reference: idle 30–45°C · load 55–75°C normal · ~85°C throttle point.
 
-## Pass criteria
+## Cold-boot test
 
-- No crash or reboot across 30 minutes
-- Temperature stays under ~80°C (cases upright, fins vertical, 1–2cm gap)
-- Clocks don't sit pinned low for long stretches
-- 5–10 cold power cycles (unplug, wait, replug) each boot cleanly
-
-## If one fails
-
-Suspect the charger first. Swap chargers between boards. If the failure follows the charger, return it. If it stays with the board, it's the board.
+Rock Pis have a known intermittent U-Boot hang on power-up. The load test can't catch it.
+1. `sudo poweroff`, wait for the LED to go off (protects the eMMC).
+2. Unplug, wait 10s, replug.
+3. After ~90s: SSH in, then check:
+```bash
+journalctl --list-boots | wc -l        # rises by 1 per boot
+systemctl --failed
+sudo journalctl -b -p err --no-pager | diff ~/baseline-errors.txt -
+```
+Boot *start* timestamps are unreliable: there's no RTC battery, so the clock resumes from the last shutdown until NTP syncs. Count boots instead.
 
 ## Results
 
-| Board | Date | Peak temp | Throttled? | Cold boots | Result |
+| Board | Date | Placement | Peak | Throttled (big cores) | Stability |
 |---|---|---|---|---|---|
-| choppedlab | | | | /10 | |
-| npclab | | | | /10 | |
+| choppedlab | 2026-10-23 | Flat, on top of another device | 81°C | 0% | Pass |
+| npclab | 2026-10-23 | Flat, on top of another device | 84°C | 5% (→1800MHz) | Pass |
+| choppedlab | 2026-10-24 | Upright, cased | 85°C | 14% (→1800/1608MHz) | Pass |
+| npclab | 2026-10-24 | Upright, cased | 85°C | 23% (→1800/1608MHz) | Pass |
 
-## tmux cheat sheet
+Cold boots: choppedlab __/__ · npclab __/__ (target 3+ each before Nov 2)
 
-| Action | Keys |
-|---|---|
-| Split side-by-side | `Ctrl+b` `%` |
-| Split top/bottom | `Ctrl+b` `"` |
-| Switch pane | `Ctrl+b` arrow |
-| Detach | `Ctrl+b` `d` |
-| List sessions | `tmux ls` |
+### Conclusion
+Both boards and both chargers are stable under 30 minutes of sustained 100% CPU + RAM load. The passive cases throttle lightly (one or two steps) at the 85°C limit. Upright placement made no measurable difference; ambient temperature and the closed case dominate, and npclab runs ~3°C hotter consistently (chip/heatsink variation).
+
+**Decision:** the real workload (DNS, VPN) is near idle, so light throttling under synthetic load is accepted. Cases stay on for dust protection; filtered active airflow comes with the rack.
