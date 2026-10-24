@@ -6,7 +6,7 @@
 - [x] Reserve IPs, apply naming theme
 - [x] Key-only SSH on both Pis
 - [ ] Stress test both Pis (before Nov 2)
-- [ ] Key-only SSH on chadlab
+- [x] Key-only SSH on chadlab
 - [ ] Tailscale on choppedlab as subnet router
 - [ ] Tailscale on chadlab (host-level, not inside gluetun)
 - [ ] Pi-hole on choppedlab (primary)
