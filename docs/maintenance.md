@@ -68,3 +68,4 @@ Anything else is new and worth investigating.
 | 2026-10-24 | choppedlab | Pi-hole installed | Quad9 upstream, listening mode ALL |
 | 2026-10-24 | Telus hub | IPv6 disabled | Closes IPv6 DNS leak around Pi-Hole (Telus resolver was answering via IPv6). Verified: Laptop DNS only Pi-hole, doubleclick -> 0.0.0.0, Tailscale OK over IPv4 |
 | 2026-10-24 | laptop, chadlab | SSH client config | Aliases for all boxes, keep-alive defaults |
+| 2026-10-24 | chadlab | Automatic updates enabled | mintupdate-automation upgrade + autoremove; manual reboots |
