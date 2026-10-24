@@ -8,3 +8,5 @@ known_hosts
 *.env
 inventory.private.md
 stress-*.log
+
+photos/
