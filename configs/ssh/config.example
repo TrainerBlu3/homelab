@@ -1,0 +1,14 @@
+# ~/.ssh/config  (Windows: C:\Users\<you>\.ssh\config)
+# Copy, fill in IPs. Keep real IPs out of the repo.
+
+Host choppedlab
+    HostName <choppedlab-ip>
+    User trainerred
+
+Host npclab
+    HostName <npclab-ip>
+    User trainergreen
+
+Host chadlab
+    HostName <chadlab-ip>
+    User trainerblue
