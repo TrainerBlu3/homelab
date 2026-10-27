@@ -71,3 +71,5 @@ Anything else is new and worth investigating.
 | 2026-10-24 | chadlab | Automatic updates enabled | mintupdate-automation upgrade + autoremove; manual reboots |
 | 2026-10-27 | chadlab | unattended-upgrades | Installed; added Ubuntu:noble-security origins (Mint distro_id mismatch); dry run OK |
 | 2026-10-27 | chadlab | boot target | set-default multi-user.target (text console) |
+| 2026-10-27 | choppedlab | iphone ssh | Termius ED25519 key (iphone-14) added; connects via tailnet IP 100.67.89.105 |
+| 2026-10-27 | choppedlab | authorized_keys cleanup | Removed duplicate iphone key; renamed to titorick-laptop / chadlab-trainerblue / iphone14-termius (2026-10) |

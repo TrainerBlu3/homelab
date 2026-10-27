@@ -98,3 +98,11 @@ Not set up on purpose. The Pis don't need shell access to each other, and leavin
 - Verify without connecting: `ssh -G <alias>` prints the final settings SSH would use.
 - Aliases work for `scp`, `rsync`, git and VS Code Remote-SSH too.
 - LAN IPs work remotely through the Tailscale subnet route (needs choppedlab up).
+
+### Authorized keys per box
+| Box | Keys |
+|---|---|
+| choppedlab | titorick-laptop-2026-10, chadlab-trainerblue-2026-10, iphone14-termius-2026-10 |
+| npclab | (check & rename when home) |
+| chadlab | (check & rename when home) |
+
