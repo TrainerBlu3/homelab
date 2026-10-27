@@ -103,6 +103,6 @@ Not set up on purpose. The Pis don't need shell access to each other, and leavin
 | Box | Keys |
 |---|---|
 | choppedlab | titorick-laptop-2026-10, chadlab-trainerblue-2026-10, iphone14-termius-2026-10 |
-| npclab | (check & rename when home) |
-| chadlab | (check & rename when home) |
+| npclab | titorick-laptop-2026-10, chadlab-trainerblue-2026-10, iphone14-termius-2026-10 |
+| chadlab | titorick-laptop-2026-10, iphone-14-termius-2026-10 |
 
