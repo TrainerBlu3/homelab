@@ -76,3 +76,8 @@ nslookup doubleclick.net <choppedlab-ip>
 4. keepalived virtual IP → hub DNS field.
 5. Tailscale DNS → Pi-holes, "Override local DNS".
 6. Unbound as upstream.
+
+### Privacy
+- Tuning phase (own devices only): privacy level 0
+- House-wide: level 2 (hide domains + clients), 30-day retention
+- Household informed before cutover

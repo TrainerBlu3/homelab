@@ -75,3 +75,4 @@ Anything else is new and worth investigating.
 | 2026-10-27 | choppedlab | authorized_keys cleanup | Removed duplicate iphone key; renamed to titorick-laptop / chadlab-trainerblue / iphone14-termius (2026-10) |
 | 2026-10-27 | all | termius hosts | iPhone Termius: choppedlab (100.x), chadlab + npclab (LAN IP via subnet route); verified key fingerprints match on all boxes |
 | 2026-10-27 | chadlab | update policy | Disabled mintupdate-automation (duplicate of unattended-upgrades). Security-only auto; full upgrades manual |
+| 2026-10-27 | choppedlab | pihole privacy | level 2 + 30-day retention confirmed; switching to level 0 for temporary blocklist tuning |
