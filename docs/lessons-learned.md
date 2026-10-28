@@ -138,6 +138,13 @@ Problems hit while building this homelab: what happened, why, how it was fixed, 
 **Root cause:** The default `Allowed-Origins` uses `${distro_id}`, which is `Linuxmint` on Mint. Ubuntu's security updates come from origin `Ubuntu` (`noble-security`), so nothing matched and no security updates would ever install, with no error.
 **Fix:** Added `"Ubuntu:noble-security"`, `"UbuntuESMApps:noble-apps-security"` and `"UbuntuESM:noble-infra-security"` to `/etc/apt/apt.conf.d/50unattended-upgrades`. Verified with `sudo unattended-upgrade --dry-run --debug`: allowed origins now include `o=Ubuntu,a=noble-security`.
 **Lesson:** Installing a tool isn't the same as it working. Verify with a dry run or test. On derivative distros (Mint, Pop!_OS), defaults written for the parent distro can silently not apply.
+
+## 20. Two auto-update systems on chadlab
+**Date:** 2026-10-27
+**What happened:** Installed unattended-upgrades on chadlab without noticing mintupdate-automation was already enabled (logged 2026-10-24).
+**Root cause:** Didn't check the maintenance log before changing the system.
+**Fix:** Disabled mintupdate-automation; kept unattended-upgrades (security-only, same as the Pis).
+**Lesson:** Read your own docs before changing a system.
 ---
 
 ## Interview stories (STAR)
