@@ -3,3 +3,4 @@
 *.conf text eol=lf
 *.md   text eol=lf
 configs/** text eol=lf
+* text=auto eol=lf
