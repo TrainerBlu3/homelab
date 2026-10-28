@@ -76,3 +76,5 @@ Anything else is new and worth investigating.
 | 2026-10-27 | all | termius hosts | iPhone Termius: choppedlab (100.x), chadlab + npclab (LAN IP via subnet route); verified key fingerprints match on all boxes |
 | 2026-10-27 | chadlab | update policy | Disabled mintupdate-automation (duplicate of unattended-upgrades). Security-only auto; full upgrades manual |
 | 2026-10-27 | choppedlab | pihole privacy | level 2 + 30-day retention confirmed; switching to level 0 for temporary blocklist tuning |
+| 2026-10-27 | tailnet | tailscale dns | Global nameserver = choppedlab Pi-hole (100.67.89.105), override on; verified iPhone via dnsleaktest + on.quad9.net |
+| 2026-10-27 | choppedlab | pihole lists | HaGeZi Pro, Gambling medium, TIF Mini, DoH + Perflyst Smart-TV; gravity rebuilt |

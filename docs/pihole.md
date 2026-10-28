@@ -81,3 +81,20 @@ nslookup doubleclick.net <choppedlab-ip>
 - Tuning phase (own devices only): privacy level 0
 - House-wide: level 2 (hide domains + clients), 30-day retention
 - Household informed before cutover
+
+### Blocklists (2026-10-27)
+| List | Purpose | Why this version |
+|---|---|---|
+| HaGeZi Pro | Ads, trackers, pop-up networks | Balanced level; Pro++ only if needed |
+| HaGeZi Gambling (medium) | Gambling sites + ads (Stake etc.) | Medium (~190k) instead of full (~618k) for the 2GB Pi |
+| HaGeZi TIF Mini | Malware / phishing / scams | Mini instead of full (2.1M) for RAM and update time |
+| HaGeZi DoH | Encrypted DNS servers | Stops browser Secure DNS bypassing Pi-hole without blocking VPNs (Tailscale, gluetun) |
+| Perflyst Smart-TV | Smart TV tracking | Tiny; ready for house-wide cutover |
+
+Default list (StevenBlack): disabled, covered by Pro.
+Tested with: d3ward adblock test, canyoublockit, dnsleaktest, on.quad9.net.
+
+### Allowlist
+| Domain | Reason | Date |
+|---|---|---|
+| (none yet) | | |
