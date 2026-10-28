@@ -57,6 +57,9 @@ Both Pis log the same harmless lines every boot:
 
 Anything else is new and worth investigating.
 
+## chadlab: known/fixed boot items
+- `casper-md5check.service` failed every boot (Mint live-installer leftover) → masked 2026-10-28.
+
 ## Planned automation
 
 - ~~Health-check script on a systemd timer, alerting by ntfy~~ Update check done on chadlab (`update-check.timer` → ntfy). Extend to Pis + add health checks (disk, temp, failed services)
@@ -87,3 +90,9 @@ Anything else is new and worth investigating.
 | 2026-10-28 | chadlab | tailscale | Joined tailnet (100.91.58.90); key expiry off; no --accept-routes, no --ssh |
 | 2026-10-28 | npclab | tailscale | Joined tailnet (100.103.67.98) as backup subnet router; route approval + failover test pending |
 | 2026-10-28 | all | ssh/termius names | Hosts use <box>.<tailnet>.ts.net (MagicDNS) on laptop + Termius |
+| 2026-10-28 | chadlab | cleanup | Masked casper-md5check (live-ISO leftover); kernel 7.0.0-42 confirmed; systemctl --failed clean |
+| 2026-10-28 | npclab | subnet failover | choppedlab tailscale down (3-min self-restore); laptop on school Wi-Fi reached hub via npclab (TcpTestSucceeded True). HA remote access verified |
+| 2026-10-28 | tailnet | dns failover | choppedlab offline 5 min; laptop (school Wi-Fi) resolved example.org + wikipedia.org via npclab Pi-hole. DNS HA verified |
+| 2026-10-28 | chadlab | uptime-kuma | v2 (SQLite, dns: both Pi-holes); 4 monitors (2 DNS, 2 HTTP, retries 2) -> ntfy Homelab Alerts; npclab outage test: down + up alerts received |
+| 2026-10-28 | chadlab | stacks | nebula-sync pinned v0.11.3 + diun labels; |
+| 2026-10-28 | chadlab | stacks + docker doc + profile | nebula-sync pinned v0.11.3 + diun labels; uptime-kuma v2; diun added; 4 stacks synced to configs/ via hlstacks; docs/docker.md; profile copy updated (tailnet redacted) |

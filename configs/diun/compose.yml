@@ -1,0 +1,19 @@
+services:
+  diun:
+    image: crazymax/diun:4
+    container_name: diun
+    restart: unless-stopped
+    command: serve
+    env_file: .env
+    environment:
+      - TZ=America/Vancouver
+      - LOG_LEVEL=info
+      - DIUN_WATCH_SCHEDULE=0 9 * * *
+      - DIUN_WATCH_FIRSTCHECKNOTIF=false
+      - DIUN_PROVIDERS_DOCKER=true
+      - DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT=true
+      - DIUN_NOTIF_NTFY_ENDPOINT=https://ntfy.sh
+      - DIUN_NOTIF_NTFY_PRIORITY=2
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
