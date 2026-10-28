@@ -8,10 +8,12 @@
 | Kernel / device tree / bootloader / firmware | **Manual**: blacklisted from automatic updates ([config](../configs/apt/51unattended-upgrades-local)) | A bad kernel or DTB can stop an SBC booting, and a box that won't boot can't be fixed over SSH |
 | Kernel rollout order | **npclab first (canary)**, verify, then choppedlab | Prove the update on the less critical box |
 | Tailscale | Self-updates (`tailscale set --auto-update`) | VPN security fixes matter |
-| chadlab (Mint) | Update Manager, automatic security updates | |
+| chadlab (Mint) | **Automatic security only**, via `unattended-upgrades` (+ `Ubuntu:noble-security` origins); full upgrades manual; weekly ntfy reminder | Same policy as the Pis; Mint's own automation disabled (was a duplicate) |
+| Device firmware (BIOS/SSD) | **Manual**, `fwupdmgr get-upgrades` → `sudo fwupdmgr update` | Riskier than packages; at home, plugged in, ideally on UPS |
 | Reboots | Never both Pis at once | DNS redundancy |
 
 Customisations go in **drop-in files** (`*.d/`), never in the package defaults, so upgrades don't raise config-file conflicts and settings survive.
+**Blacklist vs hold:** the kernel block is an unattended-upgrades *blacklist*, so automatic runs skip it but manual `apt full-upgrade` still installs it (which the canary routine needs). `apt-mark showhold` is empty by design. Check with `apt-config dump | grep -A6 Package-Blacklist`. The Armbian banner's "Kernel upgrade enabled" refers to Armbian's own setting, not this.
 
 ## Manual kernel update (per Pi)
 
@@ -41,6 +43,8 @@ sudo journalctl -b -p err --no-pager > ~/baseline-errors.txt   # new baseline
 | Tailscale health | Monthly | `tailscale status` |
 | Clock sync | Monthly | `timedatectl` |
 | Dust cleaning | Every 3 months | Power off; compressed air through vents and heatsinks |
+| Pending updates / reboot needed | Weekly (automatic) | `update-check` timer → ntfy push (Sun 10:00) |
+| Firmware updates | Monthly | `fwupdmgr get-upgrades` |
 
 ## Known-normal boot errors (baseline)
 
@@ -55,7 +59,7 @@ Anything else is new and worth investigating.
 
 ## Planned automation
 
-- Health-check script on a systemd timer, alerting by ntfy
+- ~~Health-check script on a systemd timer, alerting by ntfy~~ Update check done on chadlab (`update-check.timer` → ntfy). Extend to Pis + add health checks (disk, temp, failed services)
 - Uptime Kuma (up/down monitoring)
 - Ansible playbook for updates across all three boxes
 
@@ -78,3 +82,8 @@ Anything else is new and worth investigating.
 | 2026-10-27 | choppedlab | pihole privacy | level 2 + 30-day retention confirmed; switching to level 0 for temporary blocklist tuning |
 | 2026-10-27 | tailnet | tailscale dns | Global nameserver = choppedlab Pi-hole (100.67.89.105), override on; verified iPhone via dnsleaktest + on.quad9.net |
 | 2026-10-27 | choppedlab | pihole lists | HaGeZi Pro, Gambling medium, TIF Mini, DoH + Perflyst Smart-TV; gravity rebuilt |
+| 2026-10-28 | chadlab | update reminder | systemd timer update-check (Sun 10:00) -> ntfy push (private topic); iOS push fixed by reinstall/resubscribe |
+| 2026-10-28 | chadlab | firmware + upgrade | SK hynix PC711 SSD firmware 41720C20 -> 41730C20 via fwupd; 7 apt pkgs |
+| 2026-10-28 | chadlab | tailscale | Joined tailnet (100.91.58.90); key expiry off; no --accept-routes, no --ssh |
+| 2026-10-28 | npclab | tailscale | Joined tailnet (100.103.67.98) as backup subnet router; route approval + failover test pending |
+| 2026-10-28 | all | ssh/termius names | Hosts use <box>.<tailnet>.ts.net (MagicDNS) on laptop + Termius |
