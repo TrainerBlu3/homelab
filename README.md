@@ -1,3 +1,6 @@
+> **Mantra: security and anonymity.** Nothing exposed publicly, least privilege by default,
+> data stays on hardware I control, and third parties see as little as possible.
+
 # homelab
 
 Budget homelab built incrementally: a Lenovo ThinkCentre M80q as the main server and two Radxa Rock Pi 4B+ boards for network services, headed for a 10" mini rack. Built as a hands-on learning project in Linux administration, networking, DNS, security hardening and documentation.
