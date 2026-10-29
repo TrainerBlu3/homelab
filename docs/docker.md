@@ -64,4 +64,20 @@ docker logs nebula-sync 2>&1 | grep -i -E "starting|sync completed"
 | Goal | Command |
 |---|---|
 | Shell inside a container | `docker exec -it <name> sh` |
-| Run one command
+| Run one command inside | `docker exec <name> <command>` |
+| Reset Dockge password | `docker exec -it dockge-dockge-1 npm run reset-password` |
+| Test Diun notification | `docker exec diun diun notif test` |
+| Disk used by Docker | `docker system df` |
+
+## Baseline before monitoring (2026-10-28)
+
+| Box | RAM used / total | Disk used | Load (1/5/15) | Temp | Containers / services |
+|---|---|---|---|---|---|
+| chadlab | 1.1G / 15G (14G avail) | 18G / 234G (8%) | 0.02 0.05 0.01 | – | dockge, nebula-sync, uptime-kuma, diun |
+| choppedlab | 290M / 1.9G (1.6G avail) | 2.2G / 29G (8%) | 0.23 0.12 0.03 | 36.9°C | Pi-hole (primary), Tailscale subnet router |
+| npclab | 280M / 1.9G (1.7G avail) | 2.2G / 29G (8%) | 0.06 0.03 0.00 | 37.5°C | Pi-hole (replica), Tailscale subnet router |
+
+
+
+
+
