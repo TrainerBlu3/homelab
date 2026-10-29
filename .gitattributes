@@ -4,3 +4,4 @@
 *.md   text eol=lf
 configs/** text eol=lf
 * text=auto eol=lf
+.githooks/* text eol=lf
