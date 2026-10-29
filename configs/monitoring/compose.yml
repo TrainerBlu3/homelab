@@ -1,0 +1,29 @@
+services:
+  prometheus:
+    image: prom/prometheus:v3
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=15d
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:13.2.5
+    container_name: grafana
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    labels:
+      - diun.watch_repo=true
+      - diun.include_tags=^\d+\.\d+\.\d+$
+      - diun.max_tags=5

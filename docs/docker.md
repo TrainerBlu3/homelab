@@ -11,6 +11,7 @@ Repo copies live in `configs/<stack>/` (synced with `hlstacks`; secrets replaced
 | uptime-kuma | `louislam/uptime-kuma:2` | 3001 | DNS/HTTP monitoring → ntfy Homelab Alerts |
 | diun | `crazymax/diun:4` | – | Daily image update check → ntfy updates topic |
 | dockge | `louislam/dockge:1` | 5001 | Stack management UI |
+| monitoring | `prom/prometheus:v3` + `grafana/grafana:13.2.5` (pinned) | 9090, 3000 | Metrics for all 3 boxes (node_exporter), 15-day retention |
 
 ## Tag policy
 

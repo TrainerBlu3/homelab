@@ -52,6 +52,12 @@
 - Content folders (served by apps): `/srv/library/{books,manga,articles}`, `/srv/inbox`
 - node_exporter (port 9100) for Prometheus
 
+## Firewall (ufw)
+
+- ufw is **active**, default INPUT policy DROP.
+- Rule: allow 172.16.0.0/12 → tcp/9100 (Prometheus container scraping the host's node_exporter).
+- ⚠️ Docker-published ports (Dockge 5001, Kuma 3001, Prometheus 9090, Grafana 3000) **bypass ufw**. Restricting them is part of the hardening plan (Tailscale-only binding).
+
 ## Cleanup
 
 - `casper-md5check.service` failed every boot (Mint live-installer leftover) → `sudo systemctl mask casper-md5check.service` + `sudo systemctl reset-failed`

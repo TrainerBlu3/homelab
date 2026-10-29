@@ -45,3 +45,15 @@ Devices on this network actively use IPv6 (Tailscale picks IPv6 for direct LAN c
 ## IPv6 leak: confirmed and closed (2026-10-24)
 - With IPv4 DNS set to Pi-hole, `nslookup doubleclick.net` was answered by Telus's IPv6 resolver and returned real addresses: the hub advertises Telus's IPv6 DNS directly.
 - Fix: IPv6 was disabled on the hub. Rollback: re-enable per the screenshot in photos/ (local only).
+
+## Ports (chadlab)
+
+| Port | Service |
+|---|---|
+| 3000 | Grafana |
+| 3001 | Uptime Kuma |
+| 5001 | Dockge |
+| 9090 | Prometheus |
+| 9100 | node_exporter (all 3 boxes) |
+| 8000 | gluetun status API (planned) |
+| 5000 | Kavita (planned) |
