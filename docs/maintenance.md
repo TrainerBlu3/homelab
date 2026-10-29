@@ -96,3 +96,5 @@ Anything else is new and worth investigating.
 | 2026-10-28 | chadlab | uptime-kuma | v2 (SQLite, dns: both Pi-holes); 4 monitors (2 DNS, 2 HTTP, retries 2) -> ntfy Homelab Alerts; npclab outage test: down + up alerts received |
 | 2026-10-28 | chadlab | stacks | nebula-sync pinned v0.11.3 + diun labels; |
 | 2026-10-28 | chadlab | stacks + docker doc + profile | nebula-sync pinned v0.11.3 + diun labels; uptime-kuma v2; diun added; 4 stacks synced to configs/ via hlstacks; docs/docker.md; profile copy updated (tailnet redacted) |
+| 2026-10-28 | all | baseline | Pre-monitoring baseline for comparison once Prometheus/Grafana is running |
+| 2026-10-28 | chadlab | doc fix | rebuilt chadlab-setup.md (escaped markdown) and added Tailscale, firmware, update reminder, Docker, cleanup sections |
