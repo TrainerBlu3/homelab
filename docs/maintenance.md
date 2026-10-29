@@ -99,3 +99,4 @@ Anything else is new and worth investigating.
 | 2026-10-28 | all | baseline | Pre-monitoring baseline for comparison once Prometheus/Grafana is running |
 | 2026-10-28 | chadlab | doc fix | rebuilt chadlab-setup.md (escaped markdown) and added Tailscale, firmware, update reminder, Docker, cleanup sections |
 | 2026-10-28 | all | prometheus + grafana | Metrics for all 3 boxes via node_exporter, 15-day retention, dashboard 1860; ufw rule for container -> host 9100; Kuma monitors for both |
+| 2026-10-28 | chadlab | gluetun + qBittorrent | Proton Free WG via gluetun, DoH Quad9 + surveillance blocklist, qBit bound to tun0; kill switch verified; Kuma monitors added. Why: VPN-only egress for torrent client |

@@ -145,6 +145,14 @@ Problems hit while building this homelab: what happened, why, how it was fixed, 
 **Root cause:** Didn't check the maintenance log before changing the system.
 **Fix:** Disabled mintupdate-automation; kept unattended-upgrades (security-only, same as the Pis).
 **Lesson:** Read your own docs before changing a system.
+
+## 21. gluetun DNS changes never took effect
+**Date:** 2026-10-28
+**What happened:** TODO
+**Root cause:** Edited the DNS env vars in `compose.yaml`, but the running container was never recreated. `docker inspect` showed only gluetun's defaults (DoT/Cloudflare), and Cloudflare DoT on port 853 kept getting reset over Proton Free.
+**Fix:** `docker compose up -d --force-recreate`. Verified with `docker inspect` and the startup log (`Upstream resolver type: doh`). Recreate the whole stack: restarting gluetun alone orphans qBittorrent, which shares its network namespace. Kill switch verified: with gluetun stopped, `wget 1.1.1.1` from qBittorrent → `Network unreachable`.
+**Lesson:** TODO
+
 ---
 
 ## Interview stories (STAR)

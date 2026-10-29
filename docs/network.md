@@ -48,12 +48,13 @@ Devices on this network actively use IPv6 (Tailscale picks IPv6 for direct LAN c
 
 ## Ports (chadlab)
 
-| Port | Service |
-|---|---|
-| 3000 | Grafana |
-| 3001 | Uptime Kuma |
-| 5001 | Dockge |
-| 9090 | Prometheus |
-| 9100 | node_exporter (all 3 boxes) |
-| 8000 | gluetun status API (planned) |
-| 5000 | Kavita (planned) |
+| Port | Service | Bind |
+|---|---|---|
+| 3000 | Grafana | all interfaces |
+| 3001 | Uptime Kuma | all interfaces |
+| 5001 | Dockge | all interfaces |
+| 9090 | Prometheus | all interfaces |
+| 9100 | node_exporter (all 3 boxes) | all interfaces (host) |
+| 8000 | gluetun status API | Tailscale only |
+| 8080 | qBittorrent WebUI (through gluetun) | Tailscale only |
+| 5000 | Kavita (planned) | — |

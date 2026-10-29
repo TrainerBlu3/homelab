@@ -1,0 +1,41 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun:v3
+    container_name: gluetun
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    env_file: .env
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      - FREE_ONLY=on
+      - FIREWALL_OUTBOUND_SUBNETS=192.168.1.0/24
+      - TZ=America/Vancouver
+      - DNS_UPSTREAM_RESOLVER_TYPE=doh
+      - DNS_UPSTREAM_RESOLVERS=quad9
+      - BLOCK_SURVEILLANCE=on
+    volumes:
+      - ./data:/gluetun
+    ports:
+      - 100.91.58.90:8000:8000
+      - 100.91.58.90:8080:8080
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:5.3.0
+    container_name: qbittorrent
+    restart: unless-stopped
+    network_mode: service:gluetun
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Vancouver
+      - WEBUI_PORT=8080
+    volumes:
+      - ./qbittorrent:/config
+      - /srv/inbox:/downloads
+networks: {}

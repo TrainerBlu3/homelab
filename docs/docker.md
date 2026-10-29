@@ -12,6 +12,8 @@ Repo copies live in `configs/<stack>/` (synced with `hlstacks`; secrets replaced
 | diun | `crazymax/diun:4` | – | Daily image update check → ntfy updates topic |
 | dockge | `louislam/dockge:1` | 5001 | Stack management UI |
 | monitoring | `prom/prometheus:v3` + `grafana/grafana:13.2.5` (pinned) | 9090, 3000 | Metrics for all 3 boxes (node_exporter), 15-day retention |
+| gluetun | qmcgaw/gluetun:v3 | 8000 (TS only) | Proton WireGuard tunnel + kill switch; DoH Quad9, surveillance blocklist |
+| qbittorrent | lscr.io/linuxserver/qbittorrent:<pin> | 8080 via gluetun (TS only) | network_mode service:gluetun; bound to tun0; encryption required, anonymous mode |
 
 ## Tag policy
 

@@ -12,7 +12,7 @@ function hllast($n = 10) { Get-Content "$HL\docs\maintenance.md" -Tail $n }
 
 function hlstatus { hl; git status; git log --oneline -5 }
 function hlpull   { hl; git pull }
-function hlcheck  { hl; git grep -n -i -E "<tailnet>|ntfy.sh/|108\.180|PRIVATE KEY" }
+function hlcheck  { hl; git grep -n -i --untracked -E "<tailnet>|ntfy.sh/|108\.180|BEGIN .*PRIVATE KEY|WIREGUARD_PRIVATE_KEY=[^<]" -- . ':!configs/powershell/profile.ps1' ':!docs/lessons-learned.md' }
 
 function hlpush($msg) {
     if (-not $msg) { Write-Host "Usage: hlpush 'message'"; return }
