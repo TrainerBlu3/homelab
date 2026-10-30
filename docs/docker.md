@@ -151,7 +151,7 @@ Owned by no stack; stacks join them as `external: true`. Created by `/opt/script
 
 | Piece | What |
 |---|---|
-| `docker-iptables-pre.service` | Runs `/opt/scripts/docker-iptables-pre.sh`; `Before=` + `RequiredBy=docker.service` → Docker won't start without it. Test script by hand after any edit (`echo $?` = 0) |
+| ~~`docker-iptables-pre.service`~~ | **Removed 2026-10-30.** The script had no rules left after the 172.30.50 cleanup: `internal: true` blocks egress and ufw blocks container → host. A no-op that Docker `RequiredBy=` was one more boot dependency for nothing. If a pre-Docker rule is ever needed again: oneshot unit, `Before=` + `RequiredBy=docker.service`, test the script by hand (`echo $?` = 0) |
 | ufw `deny from 172.31.60.0/24` | Container → host bridge IP goes through INPUT, not DOCKER-USER (FORWARD) |
 | `docker.service.d/10-wait-tailscale.conf` | Docker waits ≤60s for the Tailscale IP before starting. `After=tailscaled` alone isn't enough (daemon started ≠ IP assigned). Fixes the boot race that stopped gluetun |
 | `kuma-push-suwayomi.timer` | Host-side health push for Suwayomi every 60s (Kuma can't reach `serve` URLs from the same host) |

@@ -171,7 +171,7 @@ Problems hit while building this homelab: what happened, why, how it was fixed, 
 **Date:** 2026-10-30
 **What happened:** TODO
 **Root cause:** (1) `internal: true` silently drops published ports, including 127.0.0.1. (2) Ports bound to the Tailscale IP failed at boot: Docker started after tailscaled but before the IP existed. (3) DOCKER-USER (FORWARD) never sees container→host-bridge traffic; that's INPUT. (4) Docker tmpfs is `noexec` by default, so zstd's native lib failed under `read_only`. (5) DROP made blocked fetches hang; REJECT fails fast. (6) `tailscale serve` listens on `<ts-ip>%tailscale0`, so same-host clients (Kuma) get connection refused.
-**Fix:** (1) `tailscale serve` → pinned container IP, no published ports. (2) Docker drop-in waits ≤60s for the Tailscale IP. (3) `ufw deny from 172.31.60.0/24`. (4) `/tmp` tmpfs with `exec`, `read_only` back on. (5) REJECT rules. (6) Host-side Kuma push timer. All verified with tests, a Docker restart and two reboots.
+**Fix:** (1) `tailscale serve` → pinned container IP, no published ports. (2) Docker drop-in waits ≤60s for the Tailscale IP. (3) `ufw deny from 172.31.60.0/24`. (4) `/tmp` tmpfs with `exec`, `read_only` back on. (5) REJECT rules (later removed with the old 172.30.50 network; `internal: true` + ufw now do the blocking, and the empty pre-Docker unit was deleted). (6) Host-side Kuma push timer. All verified with tests, a Docker restart and two reboots.
 **Lesson:** TODO
 
 ---
