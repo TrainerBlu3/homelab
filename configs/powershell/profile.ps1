@@ -16,7 +16,7 @@ function hlcheck { hl; $p = ((Get-Content .git\info\secret-patterns) -ne '') -jo
 
 function hlpush($msg) {
     if (-not $msg) { Write-Host "Usage: hlpush 'message'"; return }
-    hl; git add docs/ configs/ .gitignore; git commit -m $msg; git push
+    hl; git add -A docs configs scripts .githooks .gitignore .gitattributes README.md; git commit -m $msg; git push
 }
 
 function hlstacks {
@@ -25,6 +25,9 @@ function hlstacks {
     foreach ($s in $stacks) {
         New-Item -ItemType Directory -Force "configs\$s" | Out-Null
         scp -q "chadlab:/opt/stacks/$s/compose.yaml" "configs\$s\compose.yml"
+        # Bind-mounted config files at the stack root (squid.conf, prometheus.yml). data/ and secrets/ are never copied.
+        $extras = ssh chadlab "cd /opt/stacks/$s && ls -1 *.conf *.yml *.yaml 2>/dev/null | grep -vx -e compose.yaml -e compose.yml"
+        foreach ($f in $extras) { scp -q "chadlab:/opt/stacks/$s/$f" "configs\$s\$f" }
         $keys = ssh chadlab "test -f /opt/stacks/$s/.env && sed -E 's/=.*/=<secret>/' /opt/stacks/$s/.env"
         if ($keys) { Set-Content "configs\$s\.env.example" $keys }
     }

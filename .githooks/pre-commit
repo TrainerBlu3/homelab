@@ -3,7 +3,8 @@
 secret='BEGIN .*PRIVATE KEY|WIREGUARD_PRIVATE_KEY=[^<]|ntfy\.sh/'
 local_patterns="$(git rev-parse --git-dir)/info/secret-patterns"
 [ -f "$local_patterns" ] && secret="$secret|$(grep -v '^$' "$local_patterns" | paste -sd'|' -)"
-escaped='^\\#|\\\*\\\*|^\\-'
+# Rendered-view escapes that break copied commands: \# \*\* \- \& \~ and "1\." list numbers
+escaped='^\\#|\\\*\\\*|^\\-|\\&|\\~|^[0-9]+\\\.'
 fail=0
 for f in $(git diff --cached --name-only --diff-filter=ACM); do
   case "$f" in
