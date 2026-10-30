@@ -1,6 +1,8 @@
 #!/bin/sh
 # pre-commit: block secrets, .env files, escaped Markdown. Prints file names only.
-secret='tail7df7c2|ntfy\.sh/|108\.180|BEGIN .*PRIVATE KEY|WIREGUARD_PRIVATE_KEY=[^<]'
+secret='BEGIN .*PRIVATE KEY|WIREGUARD_PRIVATE_KEY=[^<]|ntfy\.sh/'
+local_patterns="$(git rev-parse --git-dir)/info/secret-patterns"
+[ -f "$local_patterns" ] && secret="$secret|$(grep -v '^$' "$local_patterns" | paste -sd'|' -)"
 escaped='^\\#|\\\*\\\*|^\\-'
 fail=0
 for f in $(git diff --cached --name-only --diff-filter=ACM); do
