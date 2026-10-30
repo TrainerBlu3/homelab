@@ -101,6 +101,8 @@ docker logs nebula-sync 2>&1 | grep -i -E "starting|sync completed"
 
 **Verified 2026-10-30:** host via bridge blocked, direct internet blocked, read-only root (`startup/` write fails), UI 200; survives docker restart + reboot.
 
+**Monitoring:** Kuma **push** monitor. `kuma-push-suwayomi.timer` (60s) checks `tailscale serve` config + `http://172.31.60.3:4567` → 200, then pushes. Kuma can't reach the serve URL: `serve` listens on `<ts-ip>%tailscale0` (interface-bound), so same-host clients get connection refused.
+
 **Auth test:** `{ mangas { totalCount } }` without token → `Unauthorized`. HTTP 200 alone proves nothing (GraphQL returns errors in the body).
 
 **Known:** GraphQL errors include Java stack traces (info disclosure; tailnet-only).
@@ -143,6 +145,17 @@ Owned by no stack; stacks join them as `external: true`. Created by `/opt/script
 
 **Gotcha:** `internal: true` silently drops published ports (including 127.0.0.1). Reach internal containers via `tailscale serve` → pinned container IP.
 
-## Host firewall
+## Host firewall and boot order
+
+| Piece | What |
+|---|---|
+| `docker-iptables-pre.service` | Runs `/opt/scripts/docker-iptables-pre.sh`; `Before=` + `RequiredBy=docker.service` → Docker won't start without it. Test script by hand after any edit (`echo $?` = 0) |
+| ufw `deny from 172.31.60.0/24` | Container → host bridge IP goes through INPUT, not DOCKER-USER (FORWARD) |
+| `docker.service.d/10-wait-tailscale.conf` | Docker waits ≤60s for the Tailscale IP before starting. `After=tailscaled` alone isn't enough (daemon started ≠ IP assigned). Fixes the boot race that stopped gluetun |
+| `kuma-push-suwayomi.timer` | Host-side health push for Suwayomi every 60s (Kuma can't reach `serve` URLs from the same host) |
+
+**UIDs:** 1500 Suwayomi · 1501 Caddy (planned) · 1502 Squid — all unused on the host.
+
+**Rollback:** `tailscale serve reset` → `compose down` suwayomi + squid → `docker network rm app-internal squid-egress` → remove `10-wait-tailscale.conf` → `systemctl disable --now kuma-push-suwayomi.timer`.
 
 

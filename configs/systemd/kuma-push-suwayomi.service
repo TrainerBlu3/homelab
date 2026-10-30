@@ -1,0 +1,6 @@
+[Unit]
+Description=Push Suwayomi health to Uptime Kuma
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/kuma-push-suwayomi.sh

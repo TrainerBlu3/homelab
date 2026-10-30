@@ -59,3 +59,5 @@ Devices on this network actively use IPv6 (Tailscale picks IPv6 for direct LAN c
 | 8080 | qBittorrent WebUI (through gluetun) | Tailscale only |
 | 5000 | Kavita (planned) | — |
 | 4567 | Suwayomi | Tailscale only |
+| 443 (tailscale serve) | Suwayomi → 172.31.60.3:4567 | tailnet only; Kuma via host push |
+| 3128 (internal) | Squid egress proxy | app-internal only, Suwayomi /32 |
