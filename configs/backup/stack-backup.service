@@ -5,3 +5,5 @@ OnFailure=stack-backup-failed.service
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/stack-backup.sh
+# A hung `docker compose stop` must not leave every stack down indefinitely
+TimeoutStartSec=45min

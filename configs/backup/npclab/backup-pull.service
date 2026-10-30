@@ -1,0 +1,15 @@
+[Unit]
+Description=Pull chadlab encrypted stack backups
+OnFailure=backup-pull-failed.service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=trainergreen
+ExecStart=/usr/local/bin/backup-pull.sh
+TimeoutStartSec=30min
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/home/trainergreen/backups

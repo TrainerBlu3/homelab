@@ -1,0 +1,6 @@
+[Unit]
+Description=Notify on backup pull failure
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'curl -fsS -m 15 -o /dev/null -H "Priority: 4" -H "Title: npclab backup pull FAILED" -d "Check: journalctl -u backup-pull" "$$(cat /etc/backup-pull/ntfy.url)"'

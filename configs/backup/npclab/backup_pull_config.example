@@ -1,0 +1,8 @@
+# npclab: ~/.ssh/backup_pull_config (600). Used only by backup-pull.sh.
+Host chadlab-backup
+    HostName <chadlab-lan-ip>
+    User trainerblue
+    IdentityFile ~/.ssh/chadlab_backup_pull
+    IdentitiesOnly yes
+    StrictHostKeyChecking yes
+    BatchMode yes
