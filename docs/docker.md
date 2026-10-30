@@ -88,26 +88,61 @@ docker logs nebula-sync 2>&1 | grep -i -E "starting|sync completed"
 |---|---|
 | Image | `v2.4.2366@sha256:1fac27c387dc2ea9949e1a01ad7f6d6de9d72d3988338a95476748e5c45c4582` |
 | User | UID 1500 (image default 1000 = my host user, docker group = root-equivalent) |
-| Filesystem | `read_only`, tmpfs `/tmp`; `server.conf` pre-created so the startup script never writes to `startup/` (which holds the jar) |
+| Filesystem | `read_only: true`; tmpfs `/tmp:size=256m,mode=1777,exec` (native libs like zstd need exec — Docker tmpfs is noexec by default); `server.conf` pre-created so the startup script never writes to `startup/` (holds the world-writable jar) |
 | Privileges | `cap_drop: ALL`, `no-new-privileges`, `pids_limit: 256`, 1g RAM, 2 CPU, logs 3×10MB |
-| Network | Own net `suwayomi-isolated` 172.30.50.0/24, IPv6 off, DNS → 192.0.2.1 (unreachable on purpose) |
-| Egress | `DOCKER-USER` drop for NEW from subnet; unit `suwayomi-egress-block` runs **before** docker.service (RequiredBy), no ExecStop |
-| Host access | ufw `deny from 172.30.50.0/24` (rule 1) |
+| Network | External `app-internal` (172.31.60.0/24, internal, no route out), pinned IP 172.31.60.3, **no published ports** |
+| Inbound | `tailscale serve` → 172.31.60.3:4567 (HTTPS on chadlab's ts.net name, tailnet only, funnel off) |
+| Egress | Only via Squid (`egress-proxy`), ACL scoped to 172.31.60.3/32 |
+| Host access | ufw `deny from 172.31.60.0/24` (container→host bridge IP = INPUT chain, not DOCKER-USER) |
 | Auth | `ui_login`, password via `AUTH_PASSWORD_FILE` (`secrets/` 700 root, file 400 UID 1500). Note: written plaintext into `data/server.conf` → `data/` is 700 |
-| Sources | None. `EXTENSION_STORES=[]`, KCEF off, FlareSolverr off, bundled UI, no UI updates |
+| Sources | MangaPlus (official Shueisha, free tier) + local. KCEF off, FlareSolverr off, bundled UI, no UI updates |
 
-**Verified 2026-10-29:** 8 egress/host tests blocked (internet IP, DNS, gateway, LAN SSH, node_exporter, Pi-hole, npclab, gluetun API) with counters > 0; rules survive `systemctl restart docker` and reboot; LAN access to 4567 fails.
+**Exception (2026-10-30):** the MangaPlus extension runs on this host, not in a separate VM (deliberate exception to the containment rule). Squid allowlist kept as configured.
+
+**Verified 2026-10-30:** host via bridge blocked, direct internet blocked, read-only root (`startup/` write fails), UI 200; survives docker restart + reboot.
 
 **Auth test:** `{ mangas { totalCount } }` without token → `Unauthorized`. HTTP 200 alone proves nothing (GraphQL returns errors in the body).
 
 **Known:** GraphQL errors include Java stack traces (info disclosure; tailnet-only).
 
-**Egress baseline:** 527 drops, all from startup + tests; 0/hour after KCEF off.
+**Settings rule:** settings in `environment:`, secrets in `secrets/`, Dockge `.env` box stays empty.
 
-**Settings rule:** settings in `environment:`, secrets in `secrets/`, Dockge `.env` box stays empty (it only feeds `${VAR}` substitution, not the container).
+**Upgrade:** new tag + digest → compare `server-reference.conf` vs `data/server.conf` on major versions → re-run isolation, auth and read-only tests.
 
-**Upgrade:** new tag + digest → compare `server-reference.conf` (in jar) vs `data/server.conf` on major versions → re-run isolation + auth tests.
+## Squid egress proxy
 
-**Containment rule:** enabling any source/extension = new risk assessment; third-party extension code moves to a separate VM, not this host (shared kernel, backups on box).
+| Control | Setting |
+|---|---|
+| Image | `ubuntu/squid@ubuntu/squid@sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029` (Squid 6.x, Ubuntu 24.04 base) |
+| User | UID 1502 from the start (`entrypoint: squid -N`) — no root, no privilege drop |
+| Filesystem | `read_only: true`; tmpfs `/run`, `/var/spool/squid`, `/var/log/squid` (owned 1502), `/tmp` |
+| Privileges | `cap_drop: ALL`, `no-new-privileges`, 256m RAM, `pids_limit: 64` |
+| Networks | `app-internal` (clients) + `squid-egress` (outbound) — both external |
+| Clients | `acl app_net src 172.31.60.3/32` — Suwayomi only |
+| Rules | CONNECT 443 to allowlisted domains only; `deny all` last; cache off |
+| Logging | `access_log stdio:/dev/stdout squid`, `cache_log stdio:/dev/stderr` → `docker logs egress-proxy` |
+| Disabled | `pinger_enable off` (needs NET_RAW; not needed for a single proxy) |
+| Diun | `watch_repo=true`, `include_tags=^\d+\.\d+.*-24\.04.*$` |
+
+**Tests:** allowed domain → `connect=200`; other domain → `connect=403` (use `%{http_connect}` — `%{http_code}` shows 000 for refused tunnels); no proxy → timeout; other IP on the subnet → 403; `TCP_DENIED` in logs.
+
+**Config changes:** edit `squid.conf` → `docker restart egress-proxy` (`squid -k reconfigure` didn't always reload ACLs) → re-run tests.
+
+**Weekly review:** `docker logs egress-proxy --since 7d 2>&1 | grep TCP_DENIED | awk '{print $7}' | sort | uniq -c | sort -rn`
+
+## Shared networks
+
+Owned by no stack; stacks join them as `external: true`. Created by `/opt/scripts/networks/` (idempotent: creates if missing, verifies if present, exit 1 if settings differ).
+
+| Network | Subnet | Internal | Members |
+|---|---|---|---|
+| `app-internal` | 172.31.60.0/24 | yes (no route out) | suwayomi (.3), egress-proxy |
+| `squid-egress` | 172.31.61.0/24 | no | egress-proxy |
+
+**Rebuild order (chadlab):** network script → `squid` → `suwayomi`.
+
+**Gotcha:** `internal: true` silently drops published ports (including 127.0.0.1). Reach internal containers via `tailscale serve` → pinned container IP.
+
+## Host firewall
 
 

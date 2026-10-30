@@ -1,0 +1,45 @@
+services:
+  egress-proxy:
+    image: ubuntu/squid@sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029
+    container_name: egress-proxy
+    restart: unless-stopped
+    user: 1502:1502
+    entrypoint:
+      - squid
+      - -N
+      - -f
+      - /etc/squid/squid.conf
+    read_only: true
+    tmpfs:
+      - /run:size=8m,uid=1502,gid=1502
+      - /var/spool/squid:size=8m,uid=1502,gid=1502
+      - /var/log/squid:size=16m,uid=1502,gid=1502
+      - /tmp:size=16m
+    volumes:
+      - ./squid.conf:/etc/squid/squid.conf:ro
+    networks:
+      - app-internal
+      - squid-egress
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 64
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    labels:
+      - diun.enable=true
+      - diun.watch_repo=true
+      - diun.include_tags=^\d+\.\d+.*-24\.04.*$
+      - diun.max_tags=10
+networks:
+  app-internal:
+    name: app-internal
+    external: true
+  squid-egress:
+    name: squid-egress
+    external: true   

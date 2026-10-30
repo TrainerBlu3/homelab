@@ -3,11 +3,12 @@ services:
     image: ghcr.io/suwayomi/suwayomi-server:v2.4.2366@sha256:1fac27c387dc2ea9949e1a01ad7f6d6de9d72d3988338a95476748e5c45c4582
     container_name: suwayomi
     restart: unless-stopped
-    user: 1500:1500
     read_only: true
     tmpfs:
-      - /tmp:size=256m,mode=1777
+      - /tmp:size=256m,mode=1777,exec   
+    user: 1500:1500
     environment:
+      - BIND_PORT=4567
       - TZ=America/Vancouver
       - AUTH_MODE=ui_login
       - AUTH_USERNAME=trainerblue
@@ -17,16 +18,16 @@ services:
       - EXTENSION_STORES=[]
       - FLARESOLVERR_ENABLED=false
       - KCEF_ENABLED=false
+      - JAVA_TOOL_OPTIONS=-Dhttp.proxyHost=egress-proxy -Dhttp.proxyPort=3128
+        -Dhttps.proxyHost=egress-proxy -Dhttps.proxyPort=3128
+        -Dhttp.nonProxyHosts=localhost|127.0.0.1
     secrets:
       - suwayomi_pw
     volumes:
       - ./data:/home/suwayomi/.local/share/Tachidesk
-    ports:
-      - 100.91.58.90:4567:4567
     networks:
-      - isolated
-    dns:
-      - 192.0.2.1
+      app-internal:
+        ipv4_address: 172.31.60.3
     cap_drop:
       - ALL
     security_opt:
@@ -45,9 +46,6 @@ secrets:
   suwayomi_pw:
     file: ./secrets/suwayomi_pw
 networks:
-  isolated:
-    name: suwayomi-isolated
-    enable_ipv6: false
-    ipam:
-      config:
-        - subnet: 172.30.50.0/24
+  app-internal:
+    name: app-internal
+    external: true
