@@ -55,7 +55,8 @@
 ## Firewall (ufw)
 
 - ufw is **active**, default INPUT policy DROP.
-- Rule: allow 172.16.0.0/12 → tcp/9100 (Prometheus container scraping the host's node_exporter).
+- Rule: allow 172.31.62.0/24 → tcp/9100 (the `monitoring` network: Prometheus scraping the host's node_exporter). Was 172.16.0.0/12, which covered every Docker network including `app-internal`; narrowed 2026-10-30.
+- Rule: deny from 172.31.60.0/24 (`app-internal` → host).
 - ⚠️ Docker-published ports (Dockge 5001, Kuma 3001, Prometheus 9090, Grafana 3000) **bypass ufw**. Restricting them is part of the hardening plan (Tailscale-only binding).
 
 ## Cleanup

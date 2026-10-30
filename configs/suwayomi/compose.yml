@@ -41,7 +41,9 @@ services:
         max-size: 10m
         max-file: "3"
     labels:
-      - diun.enable=true
+      - diun.watch_repo=true
+      - diun.include_tags=^v\d+\.\d+\.\d+$
+      - diun.max_tags=5
 secrets:
   suwayomi_pw:
     file: ./secrets/suwayomi_pw

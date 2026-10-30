@@ -96,6 +96,7 @@ docker logs nebula-sync 2>&1 | grep -i -E "starting|sync completed"
 | Host access | ufw `deny from 172.31.60.0/24` (container→host bridge IP = INPUT chain, not DOCKER-USER) |
 | Auth | `ui_login`, password via `AUTH_PASSWORD_FILE` (`secrets/` 700 root, file 400 UID 1500). Note: written plaintext into `data/server.conf` → `data/` is 700 |
 | Sources | MangaPlus (official Shueisha, free tier) + local. KCEF off, FlareSolverr off, bundled UI, no UI updates |
+| Updates | Diun `watch_repo=true` + `include_tags=^v\d+\.\d+\.\d+$` (a tag+digest pin never "updates" by itself; Diun has to list newer tags) |
 
 **Exception (2026-10-30):** the MangaPlus extension runs on this host, not in a separate VM (deliberate exception to the containment rule). Squid allowlist kept as configured.
 
@@ -140,6 +141,7 @@ Owned by no stack; stacks join them as `external: true`. Created by `/opt/script
 |---|---|---|---|
 | `app-internal` | 172.31.60.0/24 | yes (no route out) | suwayomi (.3), egress-proxy |
 | `squid-egress` | 172.31.61.0/24 | no | egress-proxy |
+| `monitoring` | 172.31.62.0/24 | no | prometheus, grafana (owned by the monitoring stack, not the script) |
 
 **Rebuild order (chadlab):** network script → `squid` → `suwayomi`.
 
