@@ -160,6 +160,13 @@ Problems hit while building this homelab: what happened, why, how it was fixed, 
 **Fix:** Checked length (`wc -c` → 75 incl. newline) and re-entered. Compared backup vs live, then queried `resource`: 1 dashboard present.
 **Lesson:** TODO
 
+## 23. Suwayomi hardening: read-only root, UID clash, settings that never applied
+**Date:** 2026-10-29
+**What happened:** TODO
+**Root cause:** (1) The image writes `server-reference.conf` into `startup/`, which also holds the jar, so a tmpfs would hide the server. (2) The image's default UID 1000 is my host user, who is in the docker group (root-equivalent). (3) `KCEF_ENABLED` went into Dockge's `.env` box, which only feeds `${VAR}` substitution, not the container.
+**Fix:** (1) Pre-created `server.conf` in a throwaway `--network none` container so the script skips the write. (2) Ran as unused UID 1500. (3) Moved to `environment:`, force-recreated, proved with `docker inspect`. Verified 8 blocked egress/host paths with counters, auth with a real query, and rules surviving a docker restart and reboot.
+**Lesson:** TODO
+
 ---
 
 ## Interview stories (STAR)

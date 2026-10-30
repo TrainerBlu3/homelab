@@ -20,6 +20,7 @@
 - [x] Prometheus + Grafana, node_exporter on all 3 boxes (dashboard 1860 + temps)
 - [x] gluetun (Proton Free, WireGuard, DoH Quad9) + qBittorrent, kill switch verified
 - [x] Encrypted nightly stack backups + restore drill
+- [x] Suwayomi deployed isolated (no sources, egress + host blocked, read-only, UID 1500); verified incl. reboot
 
 ## Now
 
@@ -55,6 +56,8 @@
 - [ ] gluetun control server auth: config.toml role → `GET /v1/vpn/status` only, API key; X-API-Key header in Kuma
 - [ ] Flip "all interfaces" ports in network.md to Tailscale only, one service at a time
 - [ ] Docker socket proxy for Diun; internal-only networks for databases
+- [ ] Reuse Suwayomi isolation pattern (own subnet + DOCKER-USER/ufw rules) for other containers, scoped to what each needs
+- [ ] Tailscale ACL policy (first rule: my devices → chadlab:4567)
 
 ## Docker (chadlab): learning path
 

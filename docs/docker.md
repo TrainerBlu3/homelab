@@ -14,6 +14,7 @@ Repo copies live in `configs/<stack>/` (synced with `hlstacks`; secrets replaced
 | monitoring | `prom/prometheus:v3` + `grafana/grafana:13.2.5` (pinned) | 9090, 3000 | Metrics for all 3 boxes (node_exporter), 15-day retention |
 | gluetun | qmcgaw/gluetun:v3 | 8000 (TS only) | Proton WireGuard tunnel + kill switch; DoH Quad9, surveillance blocklist |
 | qbittorrent | lscr.io/linuxserver/qbittorrent:<pin> | 8080 via gluetun (TS only) | network_mode service:gluetun; bound to tun0; encryption required, anonymous mode |
+| suwayomi | v2.4.2366@sha256:1fac27c3… | 4567 (TS only) | Isolated: see Suwayomi section |
 
 ## Tag policy
 
@@ -81,6 +82,32 @@ docker logs nebula-sync 2>&1 | grep -i -E "starting|sync completed"
 | npclab | 280M / 1.9G (1.7G avail) | 2.2G / 29G (8%) | 0.06 0.03 0.00 | 37.5°C | Pi-hole (replica), Tailscale subnet router |
 
 
+## Suwayomi (isolated)
 
+| Control | Setting |
+|---|---|
+| Image | `v2.4.2366@sha256:1fac27c387dc2ea9949e1a01ad7f6d6de9d72d3988338a95476748e5c45c4582` |
+| User | UID 1500 (image default 1000 = my host user, docker group = root-equivalent) |
+| Filesystem | `read_only`, tmpfs `/tmp`; `server.conf` pre-created so the startup script never writes to `startup/` (which holds the jar) |
+| Privileges | `cap_drop: ALL`, `no-new-privileges`, `pids_limit: 256`, 1g RAM, 2 CPU, logs 3×10MB |
+| Network | Own net `suwayomi-isolated` 172.30.50.0/24, IPv6 off, DNS → 192.0.2.1 (unreachable on purpose) |
+| Egress | `DOCKER-USER` drop for NEW from subnet; unit `suwayomi-egress-block` runs **before** docker.service (RequiredBy), no ExecStop |
+| Host access | ufw `deny from 172.30.50.0/24` (rule 1) |
+| Auth | `ui_login`, password via `AUTH_PASSWORD_FILE` (`secrets/` 700 root, file 400 UID 1500). Note: written plaintext into `data/server.conf` → `data/` is 700 |
+| Sources | None. `EXTENSION_STORES=[]`, KCEF off, FlareSolverr off, bundled UI, no UI updates |
+
+**Verified 2026-10-29:** 8 egress/host tests blocked (internet IP, DNS, gateway, LAN SSH, node_exporter, Pi-hole, npclab, gluetun API) with counters > 0; rules survive `systemctl restart docker` and reboot; LAN access to 4567 fails.
+
+**Auth test:** `{ mangas { totalCount } }` without token → `Unauthorized`. HTTP 200 alone proves nothing (GraphQL returns errors in the body).
+
+**Known:** GraphQL errors include Java stack traces (info disclosure; tailnet-only).
+
+**Egress baseline:** 527 drops, all from startup + tests; 0/hour after KCEF off.
+
+**Settings rule:** settings in `environment:`, secrets in `secrets/`, Dockge `.env` box stays empty (it only feeds `${VAR}` substitution, not the container).
+
+**Upgrade:** new tag + digest → compare `server-reference.conf` (in jar) vs `data/server.conf` on major versions → re-run isolation + auth tests.
+
+**Containment rule:** enabling any source/extension = new risk assessment; third-party extension code moves to a separate VM, not this host (shared kernel, backups on box).
 
 

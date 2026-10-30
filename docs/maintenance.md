@@ -101,3 +101,4 @@ Anything else is new and worth investigating.
 | 2026-10-28 | all | prometheus + grafana | Metrics for all 3 boxes via node_exporter, 15-day retention, dashboard 1860; ufw rule for container -> host 9100; Kuma monitors for both |
 | 2026-10-28 | chadlab | gluetun + qBittorrent | Proton Free WG via gluetun, DoH Quad9 + surveillance blocklist, qBit bound to tun0; kill switch verified; Kuma monitors added. Why: VPN-only egress for torrent client |
 | 2026-10-29 | chadlab | stack backups | nightly age-encrypted stack backups to npclab. Kuma/Grafana had no recoverable copy state so we added one. Restore drill passed |
+| 2026-10-29 | chadlab | suwayomi isolated deploy | Suwayomi with full isolation (own net, egress+host blocked, read-only, UID 1500, no sources); it tests zero-trust pattern on a container that needs nothing. Rollback: compose down; systemctl disable suwayomi-egress-block; ufw delete deny from 172.30.50.0/24; rm -r /opt/stacks/suwayomi |

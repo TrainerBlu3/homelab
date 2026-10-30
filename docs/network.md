@@ -58,3 +58,4 @@ Devices on this network actively use IPv6 (Tailscale picks IPv6 for direct LAN c
 | 8000 | gluetun status API | Tailscale only |
 | 8080 | qBittorrent WebUI (through gluetun) | Tailscale only |
 | 5000 | Kavita (planned) | — |
+| 4567 | Suwayomi | Tailscale only |
