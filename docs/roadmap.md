@@ -19,6 +19,7 @@
 - [x] Uptime Kuma v2
 - [x] Prometheus + Grafana, node_exporter on all 3 boxes (dashboard 1860 + temps)
 - [x] gluetun (Proton Free, WireGuard, DoH Quad9) + qBittorrent, kill switch verified
+- [x] Encrypted nightly stack backups + restore drill
 
 ## Now
 
@@ -38,6 +39,8 @@
 - [ ] Grafana alerts → ntfy
 - [ ] Unbound recursive DNS on both Pis
 - [ ] RTC coin-cell battery for the Pis
+- [ ] Monthly backup drill
+- [ ] Backup drive replaces npclab as target
 
 ## Black Friday (Nov 2026)
 

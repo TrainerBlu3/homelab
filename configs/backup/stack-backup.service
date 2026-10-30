@@ -1,0 +1,7 @@
+[Unit]
+Description=Encrypted backup of /opt/stacks
+OnFailure=stack-backup-failed.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/stack-backup.sh

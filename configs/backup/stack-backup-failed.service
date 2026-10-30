@@ -1,0 +1,6 @@
+[Unit]
+Description=Notify on backup failure
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'curl -s -H "Priority: 4" -H "Title: chadlab backup FAILED" -d "Check: journalctl -u stack-backup" "$$(cat /etc/stack-backup/ntfy.url)" >/dev/null'

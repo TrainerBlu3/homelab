@@ -153,6 +153,13 @@ Problems hit while building this homelab: what happened, why, how it was fixed, 
 **Fix:** `docker compose up -d --force-recreate`. Verified with `docker inspect` and the startup log (`Upstream resolver type: doh`). Recreate the whole stack: restarting gluetun alone orphans qBittorrent, which shares its network namespace. Kill switch verified: with gluetun stopped, `wget 1.1.1.1` from qBittorrent → `Network unreachable`.
 **Lesson:** TODO
 
+## 22. Backup drill: "0 dashboards" and a bad key paste
+**Date:** 2026-10-29
+**What happened:** TODO
+**Root cause:** Key: copied an incomplete line from the password manager (60 chars vs 74). Dashboards: Grafana 13 stores dashboards in the `resource` table; the legacy `dashboard` table is empty on the live DB too.
+**Fix:** Checked length (`wc -c` → 75 incl. newline) and re-entered. Compared backup vs live, then queried `resource`: 1 dashboard present.
+**Lesson:** TODO
+
 ---
 
 ## Interview stories (STAR)

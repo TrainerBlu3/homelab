@@ -37,7 +37,8 @@ function hldone {
     $box   = Read-Host "Box (e.g. chadlab, npclab, all)"
     $task  = Read-Host "Task (short)"
     $notes = Read-Host "What changed + WHY"
-    hllog $box $task $notes
+    $rb    = Read-Host "Rollback (how to undo, or 'n/a')"
+    hllog $box $task "$notes. Rollback: $rb"
     $msg = Read-Host "Commit message (e.g. chadlab: pin nebula-sync)"
     hlpush $msg
 }
