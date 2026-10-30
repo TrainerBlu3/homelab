@@ -13,6 +13,8 @@ Database: SQLite (in `./data`, not committed).
 | qBittorrent UI | HTTP(s) | `http://<chadlab-ts>:8080` | 60s | 2 |
 | Prometheus | HTTP(s) | `http://<chadlab-ts>:9090/-/healthy` | 60s | 2 |
 | Grafana | HTTP(s) | `http://<chadlab-ts>:3000/api/health` | 60s | 2 |
+| Suwayomi | Push | `kuma-push-suwayomi.timer` on chadlab (URL in `/etc/kuma-push/suwayomi.url`) | 60s | 2 |
+| chadlab backup | Push | end of `stack-backup.sh` (URL in `/etc/stack-backup/kuma-push.url`) | 90000s (25h) | 0 |
 
 ## Notes
 
@@ -20,3 +22,4 @@ Database: SQLite (in `./data`, not committed).
 - **qBittorrent red, gluetun green** = qBittorrent orphaned after a gluetun restart → `docker compose up -d --force-recreate` in `/opt/stacks/gluetun`.
 - **Both red** = gluetun or the tunnel is down; check `docker logs gluetun`.
 - No "Docker Container" monitors: they need the Docker socket mounted into Kuma (root-equivalent).
+- **Push monitors** alert on *silence*: Kuma can't reach `tailscale serve` from the same host (Suwayomi), and a backup that never ran produces no failure to report. Push URL hosts are rewritten to `127.0.0.1:3001`; tokens are secrets (password manager, not the repo).
