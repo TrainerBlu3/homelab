@@ -1,3 +1,10 @@
+networks:
+  default:
+    name: monitoring
+    ipam:
+      config:
+        - subnet: 172.31.62.0/24
+
 services:
   prometheus:
     image: prom/prometheus:v3
@@ -27,11 +34,3 @@ services:
       - diun.watch_repo=true
       - diun.include_tags=^\d+\.\d+\.\d+$
       - diun.max_tags=5
-
-# Pinned subnet so ufw can allow exactly this network -> node_exporter (9100) on the host
-networks:
-  default:
-    name: monitoring
-    ipam:
-      config:
-        - subnet: 172.31.62.0/24

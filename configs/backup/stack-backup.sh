@@ -50,7 +50,7 @@ fi
 # Kuma was just restarted with everything else, so retry while it comes up.
 # A failed push doesn't fail the backup: Kuma alerts on the missing heartbeat anyway.
 if [ -r "$PUSH_URL_FILE" ]; then
-  curl -fsS -m 15 --retry 6 --retry-delay 10 --retry-connrefused -o /dev/null "$(cat "$PUSH_URL_FILE")" \
+  curl -fsS -m 15 --retry 18 --retry-delay 10 --retry-connrefused --retry-all-errors -o /dev/null "$(cat "$PUSH_URL_FILE")" \
     || echo "warning: Kuma heartbeat push failed" >&2
 else
   echo "warning: $PUSH_URL_FILE missing, no heartbeat sent" >&2
